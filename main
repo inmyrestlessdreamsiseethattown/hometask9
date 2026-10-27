@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <math.h>
+#include <locale.h>
+
+double rasstoyanie(double x, double y,
+    double x1, double y1,
+    double x2, double y2)
+{
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+
+    double t = ((x - x1) * dx + (y - y1) * dy)
+        / (dx * dx + dy * dy);
+
+    if (t < 0)
+        t = 0;
+
+    if (t > 1)
+        t = 1;
+
+    double px = x1 + t * dx;
+    double py = y1 + t * dy;
+
+    return sqrt((x - px) * (x - px)
+        + (y - py) * (y - py));
+}
+
+int main(void)
+{
+    setlocale(LC_ALL, "Russian");
+
+    char simvol;
+    int r;
+
+    printf("Лабораторная работа №9\n");
+    printf("Вариант 16 — Четырёхугольник\n\n");
+
+    printf("Введите символ для рисования: ");
+
+    if (scanf_s(" %c", &simvol, (unsigned)1) != 1)
+    {
+        printf("Ошибка ввода символа!\n");
+        return 1;
+    }
+
+    printf("Введите радиус окружности r (от 2 до 15): ");
+
+    if (scanf_s("%d", &r) != 1 || r < 2 || r > 15)
+    {
+        printf("Ошибка! Радиус должен быть от 2 до 15.\n");
+        return 1;
+    }
+
+    double Ax = 2, Ay = 2;
+    double Bx = 4 * r, By = 0;
+    double Cx = 5 * r, Cy = 2 * r;
+    double Dx = r, Dy = 2 * r;
+
+    double Ox = 2.5 * r;
+    double Oy = r;
+
+    int shirina = 5 * r + 3;
+    int vysota = 2 * r + 3;
+
+    printf("\n");
+
+    for (int y = 0; y <= vysota; y++)
+    {
+        for (int x = 0; x <= shirina; x++)
+        {
+            double d = sqrt((x - Ox) * (x - Ox)
+                + (y - Oy) * (y - Oy));
+
+            int okruzhnost = fabs(d - r) < 0.6;
+
+            int kontur =
+                rasstoyanie(x, y, Ax, Ay, Bx, By) < 0.6 ||
+                rasstoyanie(x, y, Bx, By, Cx, Cy) < 0.6 ||
+                rasstoyanie(x, y, Cx, Cy, Dx, Dy) < 0.6 ||
+                rasstoyanie(x, y, Dx, Dy, Ax, Ay) < 0.6;
+
+            if (kontur || okruzhnost)
+                printf("%c", simvol);
+            else
+                printf(" ");
+        }
+
+        printf("\n");
+    }
+
+    printf("\nПостроение фигуры завершено.\n");
+
+    return 0;
+}
